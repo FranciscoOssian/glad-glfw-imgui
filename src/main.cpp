@@ -11,25 +11,28 @@ static void glfw_error_callback(int error, const char *description) {
   fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
-int main(int, char **) {
+// Função de inicialização do ImGui e GLFW
+bool initialize(GLFWwindow *&window, const char *glsl_version, ImGuiIO &io) {
+  // ... Código de inicialização
+
   glfwSetErrorCallback(glfw_error_callback);
 
   if (!glfwInit()) return 1;
 
 #if defined(__APPLE__)
-  const char *glsl_version = "#version 150";
+  glsl_version = "#version 150";
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #else
-  const char *glsl_version = "#version 130";
+  glsl_version = "#version 130";
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 #endif
 
-  GLFWwindow *window = glfwCreateWindow(
-      1280, 720, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+  window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example",
+                            nullptr, nullptr);
   if (window == nullptr) return 1;
   glfwMakeContextCurrent(window);
   glfwSwapInterval(1);
@@ -41,7 +44,7 @@ int main(int, char **) {
 
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
-  ImGuiIO &io = ImGui::GetIO();
+  io = ImGui::GetIO();
   (void)io;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
   io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
@@ -50,6 +53,16 @@ int main(int, char **) {
 
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
+
+  return true;  // ou false em caso de erro
+}
+
+int main(int, char **) {
+  const char *glsl_version;
+  GLFWwindow *window;
+  ImGuiIO     io;
+
+  initialize(window, glsl_version, io);
 
   bool   show_demo_window    = true;
   bool   show_another_window = false;

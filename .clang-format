@@ -1,6 +1,7 @@
 Language: Cpp
 BasedOnStyle: Google
 IndentWidth: 2
+IndentPPDirectives: AfterHash
 AccessModifierOffset: -4
 AlignAfterOpenBracket: Align
 AlignConsecutiveAssignments: true
