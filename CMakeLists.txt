@@ -7,6 +7,7 @@ project(example_glfw_opengl3)
 # Set ImGui directory
 set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/vendor/ImGUI)
 
+
 # Glob source files
 file(GLOB SOURCES
     src/main.cpp
