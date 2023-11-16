@@ -12,6 +12,7 @@ set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/vendor/ImGUI)
 file(GLOB SOURCES
     src/main.cpp
     src/loop.cpp
+    src/initialize.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
