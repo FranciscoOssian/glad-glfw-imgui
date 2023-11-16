@@ -11,6 +11,7 @@ set(IMGUI_DIR ${CMAKE_SOURCE_DIR}/vendor/ImGUI)
 # Glob source files
 file(GLOB SOURCES
     src/main.cpp
+    src/loop.cpp
     ${IMGUI_DIR}/imgui.cpp
     ${IMGUI_DIR}/imgui_demo.cpp
     ${IMGUI_DIR}/imgui_draw.cpp
@@ -29,8 +30,12 @@ set(CMAKE_CXX_STANDARD 11)
 # Add glad submodule
 add_subdirectory(vendor/glad)
 
-# Add include directories for glad
-target_include_directories(example_glfw_opengl3 PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include)
+# Add include directories
+target_include_directories(
+    example_glfw_opengl3 PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/glad/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
 
 # Include ImGui directory and its subdirectories
 include_directories(

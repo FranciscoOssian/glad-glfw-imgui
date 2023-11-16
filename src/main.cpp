@@ -6,18 +6,16 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+#include "loop.hpp"
 
 static void glfw_error_callback(int error, const char *description) {
-  fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+  fprintf(stderr, "GLFW Error %d:%s\n", error, description);
 }
 
-// Função de inicialização do ImGui e GLFW
 bool initialize(GLFWwindow *&window, const char *glsl_version, ImGuiIO &io) {
-  // ... Código de inicialização
-
   glfwSetErrorCallback(glfw_error_callback);
 
-  if (!glfwInit()) return 1;
+  if (!glfwInit()) return 0;
 
 #if defined(__APPLE__)
   glsl_version = "#version 150";
@@ -39,7 +37,7 @@ bool initialize(GLFWwindow *&window, const char *glsl_version, ImGuiIO &io) {
 
   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
     fprintf(stderr, "Failed to initialize OpenGL loader!\n");
-    return 1;
+    return 0;
   }
 
   IMGUI_CHECKVERSION();
@@ -54,7 +52,7 @@ bool initialize(GLFWwindow *&window, const char *glsl_version, ImGuiIO &io) {
   ImGui_ImplGlfw_InitForOpenGL(window, true);
   ImGui_ImplOpenGL3_Init(glsl_version);
 
-  return true;  // ou false em caso de erro
+  return true;
 }
 
 int main(int, char **) {
@@ -62,19 +60,14 @@ int main(int, char **) {
   GLFWwindow *window;
   ImGuiIO     io;
 
-  initialize(window, glsl_version, io);
+  if (!initialize(window, glsl_version, io)) return 1;
 
   bool   show_demo_window    = true;
   bool   show_another_window = false;
   ImVec4 clear_color         = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-#ifdef __EMSCRIPTEN__
-  io.IniFilename = nullptr;
-  EMSCRIPTEN_MAINLOOP_BEGIN
-#else
-  while (!glfwWindowShouldClose(window))
-#endif
-  {
+  auto myCallback = [&show_demo_window, &show_another_window, &clear_color, &io,
+                     window]() {
     glfwPollEvents();
 
     ImGui_ImplOpenGL3_NewFrame();
@@ -122,10 +115,9 @@ int main(int, char **) {
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glfwSwapBuffers(window);
-  }
-#ifdef __EMSCRIPTEN__
-  EMSCRIPTEN_MAINLOOP_END;
-#endif
+  };
+
+  loopWindowShouldClose(myCallback, window, &io);
 
   ImGui_ImplOpenGL3_Shutdown();
   ImGui_ImplGlfw_Shutdown();
